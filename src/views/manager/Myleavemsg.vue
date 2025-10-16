@@ -1,51 +1,93 @@
 <template>
-    <div>
-        <div class="card" style="margin-bottom: 10px;">
-            <el-input v-model="data.content" :prefix-icon="Search" style="width: 300px; margin-right: 10px"
-                      placeholder="请输入评论关键字"></el-input>
-            <el-button type="primary" style="margin-left: 10px;" @click="load">查询</el-button>
-            <el-button type="info" @click="reset">重置</el-button>
+  <div class="comment-container">
+    <!-- 搜索卡片 -->
+    <el-card class="search-card" shadow="hover">
+      <div class="search-wrapper">
+        <el-input
+            v-model="data.content"
+            :prefix-icon="Search"
+            class="search-input"
+            placeholder="请输入评论关键字"
+            clearable
+        ></el-input>
+        <div class="button-group">
+          <el-button type="primary" @click="load" :icon="Search">查询</el-button>
+          <el-button type="info" @click="reset" :icon="Refresh">重置</el-button>
         </div>
-        <div class="card">
-            <div style="margin-bottom: 10px;">
-                <el-button type="primary" @click="handlerAdd">我要评论</el-button>
-            </div>
-            <div style="margin-bottom: 10px;">
-                <el-table :data="data.tableData">
-                    <el-table-column label="序号" prop="id" width="70"></el-table-column>
-                    <el-table-column label="评论人账号" prop="memberName"></el-table-column>
-                    <el-table-column label="评论内容" prop="content"></el-table-column>
-                    <el-table-column label="评论时间" prop="createTime"></el-table-column>
-                    <el-table-column label="评论回复" prop="reply"></el-table-column>
-                    <el-table-column label="评论回复时间" prop="replyTime"></el-table-column>
-                    <el-table-column label="回复人" prop="replyName"></el-table-column>
-                </el-table>
-            </div>
-            <div class="card">
-                <el-pagination background layout="prev, pager,next" @current-change="handelCurrentChange"
-                               v-model:current-page="data.pageNum" v-model:page-size="data.pageSize"
-                               :total="data.total"/>
-            </div>
-        </div>
-    </div>
+      </div>
+    </el-card>
 
-    <el-dialog width="35%" v-model="data.formVisible" title="评论信息" destory-on-close>
-        <el-form :model="data.form" ref="formRef" :rules="rules" label-width="100px" label-position="right"
-                 style="padding-right: 40px">
-            <el-form-item label="评论内容">
-                <el-input v-model="data.form.content" type="textarea" :rows="6" autocomplete="off"/>
-            </el-form-item>
-        </el-form>
-        <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="data.formVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">评 论</el-button>
-      </span>
-        </template>
+    <!-- 内容卡片 -->
+    <el-card class="content-card" shadow="never">
+      <!-- 操作栏 -->
+      <div class="action-bar">
+        <el-button type="primary" @click="handlerAdd" :icon="Plus">我要评论</el-button>
+      </div>
+
+      <!-- 表格区域 -->
+      <div class="table-container">
+        <el-table
+            :data="data.tableData"
+            stripe
+            border
+            size="medium"
+            header-row-class-name="table-header"
+            v-loading="data.loading"
+        >
+          <el-table-column label="序号" prop="id" width="70" align="center"></el-table-column>
+          <el-table-column label="评论人账号" prop="memberName" min-width="120" show-overflow-tooltip></el-table-column>
+          <el-table-column label="评论内容" prop="content" min-width="200" show-overflow-tooltip></el-table-column>
+          <el-table-column label="评论时间" prop="createTime" width="160" align="center"></el-table-column>
+          <el-table-column label="评论回复" prop="reply" min-width="180" show-overflow-tooltip></el-table-column>
+          <el-table-column label="回复时间" prop="replyTime" width="160" align="center"></el-table-column>
+          <el-table-column label="回复人" prop="replyName" width="120" show-overflow-tooltip></el-table-column>
+        </el-table>
+      </div>
+
+      <!-- 分页 -->
+      <div class="pagination-wrapper">
+        <el-pagination
+            background
+            layout="total, prev, pager, next, sizes"
+            @current-change="handelCurrentChange"
+            @size-change="handleSizeChange"
+            v-model:current-page="data.pageNum"
+            v-model:page-size="data.pageSize"
+            :total="data.total"
+            :page-sizes="[10, 20, 50, 100]"
+        />
+      </div>
+    </el-card>
+
+    <!-- 评论对话框 -->
+    <el-dialog
+        width="500px"
+        v-model="data.formVisible"
+        title="发表评论"
+        destroy-on-close
+        center
+    >
+      <el-form :model="data.form" ref="formRef" :rules="rules" label-width="80px">
+        <el-form-item label="评论内容">
+          <el-input
+              v-model="data.form.content"
+              type="textarea"
+              :rows="5"
+              placeholder="请输入您的评论内容..."
+              maxlength="500"
+              show-word-limit
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="data.formVisible = false">取消</el-button>
+                    <el-button type="primary" @click="save" :loading="data.submitting">发表评论</el-button>
+                </span>
+      </template>
     </el-dialog>
-
+  </div>
 </template>
-
 
 <script setup>
     import {reactive, ref} from "vue";
