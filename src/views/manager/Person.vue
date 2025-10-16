@@ -1,30 +1,102 @@
 <template>
-  <div>
-    <div class="card" style="width: 100%; padding: 40px">
-      <el-form :model="data.form" ref="formRef" label-width="100px" label-position="right" style="padding-right: 40px">
-        <el-form-item label="用户头像">
-          <el-upload class="avatar-uploader" action="http://localhost:9090/files/upload" :show-file-list="false" :on-success="handleImgUploadSuccess">
-            <img v-if="data.form.photos" :src="data.form.photos" class="avatar">
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="用户账号" prop="uname">
-          <el-input v-model="data.form.uname" autocomplete="off" disabled />
-        </el-form-item>
-        <el-form-item label="用户密码" prop="upass">
-          <el-input show-password v-model="data.form.upass" autocomplete="off"/>
-        </el-form-item>
-        <el-form-item label="用户昵称">
-          <el-input v-model="data.form.nickname" autocomplete="off"/>
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="data.form.phone" autocomplete="off"/>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="update">保 存</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+  <div class="user-profile-container">
+    <el-card class="profile-card" shadow="hover">
+      <template #header>
+        <div class="card-header">
+          <span class="header-title">个人信息设置</span>
+
+        </div>
+      </template>
+
+      <div class="form-content">
+        <el-form :model="data.form" ref="formRef" label-width="100px" class="profile-form">
+          <!-- 头像上传区域 -->
+          <div class="avatar-section">
+            <el-form-item label="用户头像">
+              <div class="avatar-upload-wrapper">
+                <el-upload
+                    class="avatar-uploader"
+                    action="http://localhost:9090/files/upload"
+                    :show-file-list="false"
+                    :on-success="handleImgUploadSuccess"
+                >
+                  <div class="avatar-preview">
+                    <img v-if="data.form.photos" :src="data.form.photos" class="avatar-image">
+                    <div v-else class="avatar-placeholder">
+                      <el-icon class="upload-icon"><Plus /></el-icon>
+                      <span class="upload-text">上传头像</span>
+                    </div>
+                  </div>
+                </el-upload>
+                <div class="avatar-tips">建议尺寸 120×120px，支持 jpg、png 格式</div>
+              </div>
+            </el-form-item>
+          </div>
+
+          <!-- 表单字段区域 -->
+          <div class="form-fields">
+            <el-row :gutter="24">
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="用户账号" prop="uname">
+                  <el-input
+                      v-model="data.form.uname"
+                      autocomplete="off"
+                      disabled
+                      placeholder="用户账号"
+                      class="custom-input"
+                  />
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="用户密码" prop="upass">
+                  <el-input
+                      show-password
+                      v-model="data.form.upass"
+                      autocomplete="off"
+                      placeholder="请输入密码"
+                      class="custom-input"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="24">
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="用户昵称">
+                  <el-input
+                      v-model="data.form.nickname"
+                      autocomplete="off"
+                      placeholder="请输入昵称"
+                      class="custom-input"
+                  />
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="手机号">
+                  <el-input
+                      v-model="data.form.phone"
+                      autocomplete="off"
+                      placeholder="请输入手机号"
+                      class="custom-input"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <!-- 保存按钮单独一行并右对齐 -->
+            <el-row>
+              <el-col :span="24">
+                <el-form-item class="save-button-container">
+                  <el-button type="primary" @click="update" :icon="Check" size="large">保存修改</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+        </el-form>
+      </div>
+    </el-card>
   </div>
 </template>
 
